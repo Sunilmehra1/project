@@ -30,7 +30,8 @@ export default function Dashboard() {
   }, [user]);
 
   const logout = () => {
-    localStorage.clear();
+    // localStorage.clear();
+    localStorage.removeItem("token")
     navigate("/");
   };
   console.log(`https://www.${Math.floor(Math.random() * Date.now())}.com`);
@@ -72,11 +73,15 @@ console.log(data)
           Task
         </button>
         {
+
+          
 data?.map((datas)=>{
   
   return  <>
+  <div className="flex gap-4 w-[100%]">
   <h1>{datas?.task}</h1>
   <span>{datas?.url}</span>
+  </div>
   </>
 })
         }

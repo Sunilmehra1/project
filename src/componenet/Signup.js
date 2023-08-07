@@ -37,7 +37,7 @@ const Signup = () => {
 
   return (
     <div>
-      <div className="flex justify-center items-center h-[100vh]  text-black mt-2 bg-blue-900 p-3 capitalize flex-col">
+      <div className="flex justify-center items-center h-[100vh]  text-black mt-2 bg-blue-900  capitalize flex-col">
         <div className="flex flex-col bg-white w-[30%] h-[80vh] space-y-5 items-center  p-3 rounded-sm">
           <div className="text-center text-3xl "> Sign up</div>
 
