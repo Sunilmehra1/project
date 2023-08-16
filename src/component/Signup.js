@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link  , json, useNavigate} from "react-router-dom";
+
+import {createUserWithEmailAndPassword , updateProfile} from "firebase/auth"
+import { auth } from "./Firebase";
 
 const Signup = () => {
+  const navigate = useNavigate()
   const [input, setinput] = useState({
     name: "",
     email: "",
     contact: "",
     password: "",
-    retype: "",
-    id   : new Date().getUTCMilliseconds()
+    
   });
+  const[ermessage , setermessage]= useState()
   const handlechange = (e) => {
     setinput({
       ...input,
@@ -17,21 +21,67 @@ const Signup = () => {
     });
   };
 
-  const handlesubmit = (e) => {
+  const handlesubmit = async(e) => {
     e.preventDefault();
-    let useralreadyexist  = localStorage?.getItem('users') ? JSON.parse(localStorage?.getItem('users')) : [];
-    console.log(useralreadyexist)
-    let user = useralreadyexist?.find(data => data.email === input.email);
+
+const {name , email, contact, password} = input;
+
+const data = await fetch(
+  "https://sunil-93261-default-rtdb.firebaseio.com/user.json",
+
+{
+  method:"POST",
+  headers: {
+    "Content-Type-":"application/json",
+  },
+  body: JSON.stringify({
+    name,
+    email,
+    contact,
+    password
     
-    if(user){
-    alert('user already exist')
-    }  else  if(localStorage.getItem('users')){
-    let user =  JSON.parse(localStorage.getItem('users'));
-      localStorage.setItem('users', JSON.stringify([...user , input]))
-    }else{
-     let user = input;
-     localStorage.setItem('users' ,JSON.stringify([user]))
+  })
+
+  
+},
+
+
+
+)
+
+
+    if (!input.name || !input.email || !input.password  ) {
+      setermessage("fill all fields")
+      return false ;
     }
+    setermessage("")
+
+createUserWithEmailAndPassword(auth  , input.email , input.password).then((res)=>{
+console.log(res)
+const user = res.user
+ 
+console.log(user)
+navigate("/page")
+
+}).catch((err)=>{
+console.log("error" , err)
+
+})
+
+    // e.preventDefault();
+    // let useralreadyexist  = localStorage?.getItem('users') ? JSON.parse(localStorage?.getItem('users')) : [];
+    // console.log(useralreadyexist)
+    // let user = useralreadyexist?.find(data => data.email === input.email);
+    
+    // if(user){
+    // alert('user already exist')
+    // }  else  if(localStorage.getItem('users')){
+    // let user =  JSON.parse(localStorage.getItem('users'));
+    //   localStorage.setItem('users', JSON.stringify([...user , input]))
+    // }else{
+    //  let user = input;
+    //  localStorage.setItem('users' ,JSON.stringify([user]))
+    // }
     setinput({
       name: "",
       email: "",
@@ -90,6 +140,7 @@ const Signup = () => {
                 onChange={handlechange}
                 className="w-[100%] border border-black bg-white py-2 px-1 rounded"
               />
+              <span className="text-red-700">{ermessage}</span>
             </div>
             
 

@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./Firebase";
 
 const Login = () => {
-  let user = localStorage.getItem("token");
-  console.log(user);
-
-  let navigate = useNavigate();
-
-  useEffect(() => {
-    if (user !== null) {
-      navigate("/dashboard");
-    }
-  }, [user]);
+  const navigate = useNavigate();
 
   const [state, setstate] = useState({
     email: "",
@@ -25,26 +18,42 @@ const Login = () => {
     });
   };
 
+  let user = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user]);
+
   const handlesubmit = (e) => {
     e.preventDefault();
-    let users = localStorage.getItem("users");
-    console.log(users);
-
-    if (users) {
-      let usersArray = JSON.parse(users);
-      if (
-        usersArray.find((data) => data.email === state.email) &&
-        usersArray.find((data) => data.password === state.password)
-      ) {
-        localStorage.setItem(
-          "token",
-          usersArray.find((data) => data.email === state.email).id
-        );
+    signInWithEmailAndPassword(auth, state.email, state.password)
+      .then((res) => {
+        localStorage.setItem("token", res?._tokenResponse?.idToken);
         navigate("/dashboard");
-      }
-    } else {
-      alert("please check your credentials");
-    }
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+    // let users = localStorage.getItem("users");
+    // console.log(users);
+
+    // if (users) {
+    //   let usersArray = JSON.parse(users);
+    //   if (
+    //     usersArray.find((data) => data.email === state.email) &&
+    //     usersArray.find((data) => data.password === state.password)
+    //   ) {
+    //     localStorage.setItem(
+    //       "token",
+    //       usersArray.find((data) => data.email === state.email).id
+    //     );
+    //     navigate("/dashboard");
+    //   }
+    // } else {
+    //   alert("please check your credentials");
+    // }
   };
 
   return (
@@ -76,18 +85,24 @@ const Login = () => {
               className="w-[100%] border border-black bg-white py-3 px-1 rounded"
             />
           </div>
-          <button type="submit" className="w-[100%] px-2 justify-center bg-green-500 rounded-sm text-white py-3 flex items-center ">
+          <button
+            type="submit"
+            className="w-[100%] px-2 justify-center bg-green-500 rounded-sm text-white py-3 flex items-center "
+          >
             Login{" "}
           </button>
         </form>
-
-        
       </div>
 
       <Link to="/lo">
-      <div>
-        <span className="text-white">Not have a account?<underline className = "text-green-400  cursor-pointer ">Signup</underline>  </span>
-      </div>
+        <div>
+          <span className="text-white">
+            Not have a account?
+            <underline className="text-green-400  cursor-pointer ">
+              Signup
+            </underline>{" "}
+          </span>
+        </div>
       </Link>
     </div>
   );
