@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 import axios from "axios";
 export default function Dashboard() {
