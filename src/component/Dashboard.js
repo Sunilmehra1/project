@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 import axios from "axios";
+import QRCARD from "./QRCARD";
 export default function Dashboard() {
   const [input, setinput] = useState({
     task: "",
@@ -9,6 +10,7 @@ export default function Dashboard() {
 
   const [data, setdata] = useState([]);
   let task = localStorage.getItem("Task");
+  const [loading , setLoading] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -39,50 +41,36 @@ export default function Dashboard() {
     });
   };
 
-  async function createURl(url) {
-    const corsProxyUrl = "https://api.allorigins.win";
-    const apiUrl = "https://clck.ru/--?url=";
 
-   await axios.get(`${corsProxyUrl}/get?url=${apiUrl}${url}`).then(res => {
-      if (res?.status === 200) {
-        // console.log(res?.data?.contents)
-        return res?.data?.contents;
-      } else {
-        return "";
-      }
-    })
 
-   
-  }
+  
 
   const handlesubmit = (e) => {
     e.preventDefault();
 
     if (localStorage.getItem("Task")) {
       let task = JSON.parse(localStorage.getItem("Task"));
-   let url = createURl(input.task)
-   console.log(url)
-      localStorage.setItem(
-        "Task",
-        JSON.stringify([{ ...input, barcode: input.task , url }, ...task])
-      );
 
-      // window.location.reload(false);
-    } else {
-      let url = createURl(input.task)
-      console.log(url)
       localStorage.setItem(
         "Task",
-        JSON.stringify([{ ...input, barcode: input.task ,url }])
+        JSON.stringify([{ ...input, barcode: input.task  }, ...task])
       );
-      // window.location.reload(false);
+     window.location.reload(false)
+    } else {
+    
+      localStorage.setItem(
+        "Task",
+        JSON.stringify([{ ...input, barcode: input.task  }])
+      );
+      window.location.reload(false)
+     
     }
   };
 
   console.log(data);
 
   return (
-    <div className="bg-blue-500 h-[100vh] flex justify-between align-baseline p-2">
+    <div className="bg-blue-500 h-[100vh] flex justify-between p-2  items-baseline">
       <form className="flex flex-col bg-white w-[30%] h-[60vh] space-y-5 items-center  p-3 rounded-sm  overflow-y-auto ">
         <input
           type="name"
@@ -102,11 +90,8 @@ export default function Dashboard() {
         {data?.map((datas) => {
           return (
             <>
-              <h1>{datas?.task}</h1>
-              <div style={{ background: "white", padding: "16px" }}>
-                <QRCode value={datas?.task} className="h-[40px]" />
-                {/* <p>{datas?.url}</p> */}
-              </div>
+            <QRCARD  datas={datas}/>
+             
             </>
           );
         })}
