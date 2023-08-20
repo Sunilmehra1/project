@@ -31,6 +31,7 @@ const Login = () => {
     signInWithEmailAndPassword(auth, state.email, state.password)
       .then((res) => {
         localStorage.setItem("token", res?._tokenResponse?.idToken);
+        localStorage.setItem("email", state.email);
         navigate("/dashboard");
       })
       .catch((err) => {
